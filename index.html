@@ -207,10 +207,29 @@ searchKeywords.forEach(function (keyword) {
 
         const key = normalizeName(name);
 
-        if (allowed && !excluded && !addedHospitalNames.has(key)) {
-          addedHospitalNames.add(key);
-          addMarker(place, "병원");
-        }
+
+if (allowed && !excluded && !addedHospitalNames.has(key)) {
+  const lat = Number(place.y);
+  const lng = Number(place.x);
+
+  const R = 6371000;
+  const dLat = (lat - center.getLat()) * Math.PI / 180;
+  const dLng = (lng - center.getLng()) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(center.getLat() * Math.PI / 180) *
+    Math.cos(lat * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+
+  const distanceMeters = 2 * R * Math.asin(Math.sqrt(a));
+
+  if (Number.isFinite(distanceMeters) && distanceMeters <= 5000) {
+    addedHospitalNames.add(key);
+    addMarker(place, "병원");
+  }
+}
+
       });
 
       if (pagination.hasNextPage) {
