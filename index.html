@@ -210,7 +210,8 @@ const excluded =
 
 
 
-places.keywordSearch("보건소", function (data, status) {
+
+places.keywordSearch("보건소", function (data, status, pagination) {
   if (status === kakao.maps.services.Status.OK) {
     data.forEach(function (place) {
       const name = place.place_name || "";
@@ -219,15 +220,43 @@ places.keywordSearch("보건소", function (data, status) {
       const isHealthCenter =
         /보건소|보건지소|보건진료소/.test(name);
 
-      const excluded =
-        /충전|주차|카페|편의점|식당|약국|전기차/.test(name + category);
+      const isMedicalCategory =
+        /의료|건강|보건/.test(category);
 
-      if (isHealthCenter && !excluded) {
+      const excluded =
+        /충전|주차|전기차|카페|편의점/.test(name + category);
+
+      const lat = Number(place.y);
+      const lng = Number(place.x);
+
+      const R = 6371000;
+      const dLat = (lat - center.getLat()) * Math.PI / 180;
+      const dLng = (lng - center.getLng()) * Math.PI / 180;
+
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(center.getLat() * Math.PI / 180) *
+        Math.cos(lat * Math.PI / 180) *
+        Math.sin(dLng / 2) ** 2;
+
+      const distance = 2 * R * Math.asin(Math.sqrt(a));
+
+      if (
+        isHealthCenter &&
+        isMedicalCategory &&
+        !excluded &&
+        distance <= 5000
+      ) {
         addMarker(place, "보건소");
       }
     });
+
+    if (pagination.hasNextPage) {
+      pagination.nextPage();
+    }
   }
 }, options);
+
 
 
 
