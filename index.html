@@ -102,13 +102,29 @@ const marker = new kakao.maps.Marker({
 });
 
 
-        const info = new kakao.maps.InfoWindow({
-          content:
-            '<div style="padding:8px;font-size:12px;min-width:130px;">' +
-            '<strong>' + place.place_name + '</strong>' +
-            '<div>' + type + '</div>' +
-            '</div>'
-        });
+
+const name = place.place_name || "의료기관";
+const address = place.road_address_name || place.address_name || "주소 정보 없음";
+const phone = place.phone || "전화번호 정보 없음";
+const detailUrl = place.place_url || "";
+
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (ch) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;",
+  '"': "&quot;", "'": "&#39;"
+}[ch]));
+
+const info = new kakao.maps.InfoWindow({
+  content: `
+    <div style="padding:12px;width:240px;font-size:12px;line-height:1.7;color:#234650;white-space:normal;overflow-wrap:anywhere;">
+      <strong style="font-size:14px;">${escapeHtml(name)}</strong>
+      <div style="color:#168B90;">${escapeHtml(type)}</div>
+      <div>📍 ${escapeHtml(address)}</div>
+      <div>☎ ${escapeHtml(phone)}</div>
+      ${detailUrl ? `<a href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer" style="color:#168B90;">카카오맵 상세정보 보기</a>` : ""}
+    </div>
+  `
+});
+
 
        
 kakao.maps.event.addListener(marker, "click", function () {
