@@ -108,25 +108,30 @@ const marker = new kakao.maps.Marker({
       };
 
 
-places.categorySearch("HP8", function (data, status) {
+
+places.categorySearch("HP8", function (data, status, pagination) {
   if (status === kakao.maps.services.Status.OK) {
     data.forEach(function (place) {
       const name = place.place_name || "";
       const category = place.category_name || "";
 
-      const allowed =
-        /내과|호흡기|종합병원|대학병원|의료원|결핵/.test(name) ||
-        /내과|호흡기|종합병원/.test(category);
-
       const excluded =
-        /치과|안과|비뇨|동물병원|한의원|피부과/.test(name + category);
+        /치과|안과|비뇨|동물병원|한의원|피부과|성형외과|정형외과|이비인후과/.test(name + category);
+
+      const allowed =
+        /내과|가정의학|의원|병원|의료원|결핵/.test(name + category);
 
       if (allowed && !excluded) {
         addMarker(place, "병원");
       }
     });
+
+    if (pagination.hasNextPage) {
+      pagination.nextPage();
+    }
   }
 }, options);
+
 
 
 
