@@ -68,6 +68,19 @@ let openedInfoWindow = null;
       function addMarker(place, type) {
         const position = new kakao.maps.LatLng(place.y, place.x);
         
+const distance = Math.sqrt(
+  Math.pow((Number(place.y) - center.getLat()) * 111000, 2) +
+  Math.pow(
+    (Number(place.x) - center.getLng()) *
+    111000 * Math.cos(center.getLat() * Math.PI / 180),
+    2
+  )
+);
+
+if (distance > 5000) {
+  return;
+}
+
 const markerColor = type === "보건소" ? "#D97735" : "#168B90";
 
 const markerImage = new kakao.maps.MarkerImage(
