@@ -107,13 +107,27 @@ const marker = new kakao.maps.Marker({
         radius: 5000
       };
 
-      places.categorySearch("HP8", function (data, status) {
-        if (status === kakao.maps.services.Status.OK) {
-          data.forEach(function (place) {
-            addMarker(place, "병원");
-          });
-        }
-      }, options);
+
+places.categorySearch("HP8", function (data, status) {
+  if (status === kakao.maps.services.Status.OK) {
+    data.forEach(function (place) {
+      const name = place.place_name || "";
+      const category = place.category_name || "";
+
+      const allowed =
+        /내과|호흡기|종합병원|대학병원|의료원|결핵/.test(name) ||
+        /내과|호흡기|종합병원/.test(category);
+
+      const excluded =
+        /치과|안과|비뇨|동물병원|한의원|피부과/.test(name + category);
+
+      if (allowed && !excluded) {
+        addMarker(place, "병원");
+      }
+    });
+  }
+}, options);
+
 
       places.keywordSearch("보건소", function (data, status) {
         if (status === kakao.maps.services.Status.OK) {
@@ -128,7 +142,7 @@ if (locationFound) {
   new kakao.maps.Circle({
     map: map,
     center: center,
-    radius: 50,
+    radius: 15,
     strokeWeight: 2,
     strokeColor: '#FFFFFF',
     fillColor: '#168BFF',
