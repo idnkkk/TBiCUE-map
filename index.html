@@ -88,7 +88,7 @@ const marker = new kakao.maps.Marker({
   image: markerImage
 });
 
-
+let openedInfoWindow = null;
         const info = new kakao.maps.InfoWindow({
           content:
             '<div style="padding:8px;font-size:12px;min-width:130px;">' +
@@ -97,9 +97,15 @@ const marker = new kakao.maps.Marker({
             '</div>'
         });
 
-        kakao.maps.event.addListener(marker, "click", function () {
-          info.open(map, marker);
-        });
+       
+kakao.maps.event.addListener(marker, "click", function () {
+  if (openedInfoWindow) {
+    openedInfoWindow.close();
+  }
+
+  info.open(map, marker);
+  openedInfoWindow = info;
+});
       }
 
       const options = {
