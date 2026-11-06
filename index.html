@@ -106,11 +106,18 @@
         }
       }, options);
 
-      if (locationFound) {
-        new kakao.maps.Marker({
-          map: map,
-          position: center
-        });
+
+if (locationFound) {
+  new kakao.maps.Circle({
+    map: map,
+    center: center,
+    radius: 20,
+    strokeWeight: 2,
+    strokeColor: '#FFFFFF',
+    fillColor: '#168BFF',
+    fillOpacity: 0.9
+  });
+  
         statusEl.textContent = "현재 위치 기준 반경 5km 내 의료기관 검색";
       } else {
         statusEl.textContent =
