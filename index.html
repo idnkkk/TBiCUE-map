@@ -178,8 +178,10 @@ places.keywordSearch("내과", function (data, status, pagination) {
       const isInternalMedicine =
         /내과/.test(name + category);
 
-      const excluded =
-        /치과|안과|비뇨|한의원|피부과|성형외과|동물병원|충전소/.test(name + category);
+
+const excluded =
+  /치과|안과|비뇨|한의원|피부과|성형외과|정형외과|이비인후과|정신건강의학과|정신과|요양병원|요양의료|동물병원|충전소/.test(name + category);
+
 
       const key = normalizeName(name);
 
