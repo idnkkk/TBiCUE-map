@@ -175,8 +175,10 @@ places.keywordSearch("내과", function (data, status, pagination) {
       const name = place.place_name || "";
       const category = place.category_name || "";
 
-      const isInternalMedicine =
-        /내과/.test(name + category);
+
+const isInternalMedicine =
+  /내과|호흡기|가정의학|종합병원|대학병원|의료원/.test(name + category);
+
 
 
 const excluded =
