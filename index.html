@@ -66,11 +66,27 @@
       const places = new kakao.maps.services.Places();
 
       function addMarker(place, type) {
-        const position = new kakao.maps.LatLng(place.y, place.x);
-        const marker = new kakao.maps.Marker({
-          map: map,
-          position: position
-        });
+        
+const markerColor = type === "보건소" ? "#D97735" : "#168B90";
+
+const markerImage = new kakao.maps.MarkerImage(
+  "data:image/svg+xml;charset=UTF-8," +
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
+        <path d="M16 1C7.7 1 1 7.7 1 16c0 11 15 25 15 25s15-14 15-25C31 7.7 24.3 1 16 1Z"
+              fill="${markerColor}" stroke="white" stroke-width="2"/>
+        <circle cx="16" cy="16" r="6" fill="white"/>
+      </svg>
+    `),
+  new kakao.maps.Size(32, 42)
+);
+
+const marker = new kakao.maps.Marker({
+  map: map,
+  position: position,
+  image: markerImage
+});
+
 
         const info = new kakao.maps.InfoWindow({
           content:
@@ -111,7 +127,7 @@ if (locationFound) {
   new kakao.maps.Circle({
     map: map,
     center: center,
-    radius: 100,
+    radius: 80,
     strokeWeight: 2,
     strokeColor: '#FFFFFF',
     fillColor: '#168BFF',
