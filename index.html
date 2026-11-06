@@ -130,16 +130,18 @@ places.categorySearch("HP8", function (data, status) {
 
 
 
+
 places.keywordSearch("보건소", function (data, status) {
   if (status === kakao.maps.services.Status.OK) {
     data.forEach(function (place) {
       const name = place.place_name || "";
+      const category = place.category_name || "";
 
       const isHealthCenter =
         /보건소|보건지소|보건진료소/.test(name);
 
       const excluded =
-        /충전소|주차장|카페|편의점|식당|약국/.test(name);
+        /충전|주차|카페|편의점|식당|약국|전기차/.test(name + category);
 
       if (isHealthCenter && !excluded) {
         addMarker(place, "보건소");
@@ -147,6 +149,7 @@ places.keywordSearch("보건소", function (data, status) {
     });
   }
 }, options);
+
 
 
 if (locationFound) {
