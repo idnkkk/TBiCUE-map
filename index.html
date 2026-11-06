@@ -169,49 +169,41 @@ medicalInstitutions.forEach(function (hospital) {
 });
 
 /* 2. 주변 내과 의원 자동 검색 */
-places.keywordSearch("내과", function (data, status, pagination) {
-  if (status === kakao.maps.services.Status.OK) {
-    data.forEach(function (place) {
-      const name = place.place_name || "";
-      const category = place.category_name || "";
 
+/* 주변 내과·가정의학과·종합병원 검색 */
+const searchKeywords = ["내과", "호흡기내과", "가정의학과", "종합병원"];
 
-const isInternalMedicine =
-  /내과|호흡기|가정의학|종합병원|대학병원|의료원/.test(name + category);
+searchKeywords.forEach(function (keyword) {
+  places.keywordSearch(keyword, function (data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+      data.forEach(function (place) {
+        const name = place.place_name || "";
+        const category = place.category_name || "";
 
+        const allowed =
+          /내과|호흡기|가정의학|종합병원|대학병원|의료원/.test(name + category);
 
+        const excluded =
+          /치과|안과|비뇨|한의원|피부과|성형외과|정형외과|이비인후과|정신건강의학과|정신과|산부인과|요양병원|동물병원|충전소/.test(name + category);
 
-const excluded =
-  /치과|안과|비뇨|한의원|피부과|성형외과|정형외과|이비인후과|정신건강의학과|정신과|요양병원|요양의료|동물병원|충전소/.test(name + category);
+        const key = normalizeName(name);
 
+        if (allowed && !excluded && !addedHospitalNames.has(key)) {
+          addedHospitalNames.add(key);
+          addMarker(place, "병원");
+        }
+      });
 
-      const key = normalizeName(name);
-
-      if (
-        isInternalMedicine &&
-        !excluded &&
-        !addedHospitalNames.has(key)
-      ) {
-        addedHospitalNames.add(key);
-        addMarker(place, "병원");
+      if (pagination.hasNextPage) {
+        pagination.nextPage();
       }
-    });
-
-    if (pagination.hasNextPage) {
-      pagination.nextPage();
     }
-  }
-}, {
-  location: center,
-  radius: 5000,
-  category_group_code: "HP8"
+  }, {
+    location: center,
+    radius: 5000,
+    category_group_code: "HP8"
+  });
 });
-
-
-
-
-
-
 
 places.keywordSearch("보건소", function (data, status, pagination) {
   if (status === kakao.maps.services.Status.OK) {
