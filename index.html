@@ -1,1 +1,141 @@
-f9161da9ead43725697e78a88cc92a08
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TBiCUE 의료기관 안내</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #F0F8F8;
+      color: #234650;
+    }
+    header {
+      background: #102F60;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .info {
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+    }
+    #map {
+      width: 100%;
+      height: 65vh;
+      min-height: 300px;
+    }
+    #status {
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .notice {
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #647C80;
+    }
+  </style>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f9161da9ead43725697e78a88cc92a08_KEY&libraries=services"></script>
+</head>
+<body>
+  <header>의료기관 안내</header>
+  <div class="info">현재 위치 주변의 병원 및 보건소를 찾아드립니다.</div>
+  <div id="map"></div>
+  <div id="status">위치 정보를 확인하고 있습니다...</div>
+  <div class="notice">
+    ※ 표시된 의료기관의 결핵 검사 및 진료 가능 여부는 방문 전 해당 기관에 확인하시기 바랍니다.
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+
+    function startMap(lat, lng, locationFound) {
+      const center = new kakao.maps.LatLng(lat, lng);
+      const map = new kakao.maps.Map(
+        document.getElementById("map"),
+        { center: center, level: 5 }
+      );
+
+      const places = new kakao.maps.services.Places();
+
+      function addMarker(place, type) {
+        const position = new kakao.maps.LatLng(place.y, place.x);
+        const marker = new kakao.maps.Marker({
+          map: map,
+          position: position
+        });
+
+        const info = new kakao.maps.InfoWindow({
+          content:
+            '<div style="padding:8px;font-size:12px;min-width:130px;">' +
+            '<strong>' + place.place_name + '</strong>' +
+            '<div>' + type + '</div>' +
+            '</div>'
+        });
+
+        kakao.maps.event.addListener(marker, "click", function () {
+          info.open(map, marker);
+        });
+      }
+
+      const options = {
+        location: center,
+        radius: 5000
+      };
+
+      places.categorySearch("HP8", function (data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          data.forEach(function (place) {
+            addMarker(place, "병원");
+          });
+        }
+      }, options);
+
+      places.keywordSearch("보건소", function (data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          data.forEach(function (place) {
+            addMarker(place, "보건소");
+          });
+        }
+      }, options);
+
+      if (locationFound) {
+        new kakao.maps.Marker({
+          map: map,
+          position: center
+        });
+        statusEl.textContent = "현재 위치 기준 반경 5km 내 의료기관 검색";
+      } else {
+        statusEl.textContent =
+          "현재 위치를 확인하지 못해 기본 지역을 표시합니다.";
+      }
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          startMap(
+            position.coords.latitude,
+            position.coords.longitude,
+            true
+          );
+        },
+        function () {
+          startMap(37.3422, 127.9202, false);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      startMap(37.3422, 127.9202, false);
+    }
+  </script>
+</body>
+</html>
