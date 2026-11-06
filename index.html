@@ -203,7 +203,7 @@ searchKeywords.forEach(function (keyword) {
           /내과|호흡기|가정의학|종합병원|대학병원|의료원/.test(name + category);
 
         const excluded =
-          /치과|안과|비뇨|한의원|피부과|성형외과|정형외과|이비인후과|정신건강의학과|정신과|산부인과|요양병원|동물병원|충전소/.test(name + category);
+          /치과|안과|비뇨|한의원|피부과|성형외과|정형외과|이비인후과|정신건강의학과|정신과|산부인과|요양병원|동물병원|충전소|인공심장|인공신장|투석실|검사실|센터/.test(name + category);
 
         const key = normalizeName(name);
 
@@ -303,7 +303,7 @@ if (locationFound) {
     fillOpacity: 0.9
   });
   
-        statusEl.textContent = "현재 위치 기준 반경 5km 내 의료기관 검색";
+        statusEl.textContent = "현재 위치 주변 의료기관을 표시합니다.";
       } else {
         statusEl.textContent =
           "현재 위치를 확인하지 못해 기본 지역을 표시합니다.";
